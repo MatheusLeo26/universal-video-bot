@@ -1,0 +1,142 @@
+{
+  "info": {
+    "_postman_id": "8f7e6d5c-4b3a-4210-9876-123456789abc",
+    "name": "Async Resource Processor API",
+    "description": "Collection for starting asynchronous resource processing jobs and checking their status.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Start Processing Job",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{api_key}}",
+            "type": "text",
+            "description": "Bearer token used to authenticate the request."
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text",
+            "description": "Indicates that the request body contains JSON."
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"resource_url\": \"https://example.com/data\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/process",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "process"
+          ]
+        },
+        "description": "Starts an asynchronous resource processing job."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200 or 202\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 202]);",
+              "});",
+              "",
+              "pm.test(\"Response contains a valid job_id\", function () {",
+              "    const responseJson = pm.response.json();",
+              "",
+              "    pm.expect(responseJson).to.have.property(\"job_id\");",
+              "    pm.expect(responseJson.job_id).to.not.be.empty;",
+              "",
+              "    pm.collectionVariables.set(\"job_id\", responseJson.job_id);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Check Job Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{api_key}}",
+            "type": "text",
+            "description": "Bearer token used to authenticate the request."
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/status/{{job_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "status",
+            "{{job_id}}"
+          ]
+        },
+        "description": "Checks the current status of an asynchronous processing job."
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response contains a valid processing status\", function () {",
+              "    const responseJson = pm.response.json();",
+              "",
+              "    pm.expect(responseJson).to.have.property(\"status\");",
+              "    pm.expect(responseJson.status).to.be.oneOf([",
+              "        \"completed\",",
+              "        \"processing\",",
+              "        \"failed\"",
+              "    ]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api/v1",
+      "type": "string",
+      "description": "Base URL for the Async Resource Processor API."
+    },
+    {
+      "key": "api_key",
+      "value": "",
+      "type": "string",
+      "description": "API key used for bearer token authentication."
+    },
+    {
+      "key": "job_id",
+      "value": "",
+      "type": "string",
+      "description": "Identifier generated dynamically when a processing job starts."
+    }
+  ]
+}
