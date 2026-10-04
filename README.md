@@ -53,10 +53,22 @@ Este projeto foi construído como uma API REST usando **FastAPI** para orquestra
 
 ## Executando a API
 
-Inicie o servidor FastAPI utilizando o Uvicorn:
+Você pode iniciar o servidor de duas maneiras: diretamente na sua máquina local ou através do Docker.
+
+### Opção 1: Via Máquina Local (Uvicorn)
+Inicie o servidor FastAPI localmente:
 ```bash
 uvicorn src.main:app --reload
 ```
+
+### Opção 2: Via Docker (Recomendado para Produção)
+Se você possui o Docker instalado, basta executar o Docker Compose na raiz do projeto. Ele já cuidará de todas as dependências complexas de navegadores e criará um volume para a sua pasta de downloads:
+```bash
+docker-compose up --build -d
+```
+O servidor estará rodando perfeitamente e acessível na mesma porta (8000). Para ver os logs, use `docker-compose logs -f`.
+
+---
 
 ### Endpoints da API
 
